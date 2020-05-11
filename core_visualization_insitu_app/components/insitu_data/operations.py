@@ -260,12 +260,12 @@ def query_images(data_name, tab, template_id, project, build, part):
         zip_name = 'dataSetInZip'
         tabs_code = ['PAT', 'PWR', 'DEN']
 
-    if data_name == 'melt-pool':
+    elif data_name == 'melt-pool':
         query_name = 'MPMLayerDataSet'
         zip_name = 'dataSetInZip'
         tabs_code = ['MPV', 'MPA']
 
-    if data_name == 'layer-wise':
+    elif data_name == 'layer-wise':
         query_name = 'layerWiseDataSet'
         zip_name = 'imageSetInZip'
         tabs_code = ['LPV', 'LEV']
@@ -283,6 +283,7 @@ def query_images(data_name, tab, template_id, project, build, part):
                                                           json.dumps(name_projection))
 
     if len(blobs_name_results) > 0:
+
         for blob_name in blobs_name_results:
             blob_list = utils.get_dict_path_value_data(blob_name.dict_content,
                                                        "dict_content.amMonitoringDataSetDB.inSItuMonitoringItem.dataSet." + query_name)
@@ -291,6 +292,7 @@ def query_images(data_name, tab, template_id, project, build, part):
 
         if isinstance(blob_list, list):
             blobs_name = []
+
             for blob in blob_list:
                 blob_name = blob[zip_name]["name"]
                 blobs_name.append(blob_name)
@@ -299,30 +301,35 @@ def query_images(data_name, tab, template_id, project, build, part):
                                                                  [json.dumps(build_query_filter),
                                                                   json.dumps(part_query_filter)],
                                                                  json.dumps(uri_projection))
-
             for blob_uri in blobs_uri_results:
                 blob_list = utils.get_list_inside_dict(
                     "dict_content.amMonitoringDataSetDB.inSItuMonitoringItem.dataSet." + query_name,
                     blob_uri.dict_content)
+
                 if isinstance(blob_list, list):
                     # Don't confuse the unique zip file (same query) with the multiples images
-                    if len(blob_list[0][query_name]) > 2:
-                        break
+                    blob_length = len(blob_list[0][query_name])
+                    if blob_length > 1:
+                        if blob_length > 2:
+                            break
+                        else:
+                            break
 
             blob_list = blob_list[0][query_name]
-
             if isinstance(blob_list, list):
                 blobs_uri = []
                 for blob in blob_list:
                     blob_name = blob[zip_name]["zipFileLocation"]["databaseURI"]
-                    # Handle fake urls (when no actual image) and put no data image instead
-                    blob_name_copy = blob_name.split('/')[-2]
-                    if '_' not in blob_name_copy:  # fake url looks like PAT_PartXXXX_LayerXXXX
+                    # Handle fake urls and put no data image instead
+                    if query_name == "BCLayerDataSet":
                         blobs_uri.append(blob_name)
-                    else:  # Real one looks like 5e3d7b61a90d0c31f82a0636
-                        blobs_uri.append(
-                            "/static/core_visualization_insitu_app/user/img/no_data_layer.jpg")  # No data image
-                    blobs_uri.append(blob_name)
+                    else:
+                        blob_name_copy = blob_name.split('/')[-2]
+                        if '_' not in blob_name_copy:  # fake url is AXXXX_PartY
+                            blobs_uri.append(blob_name)
+                        else:  # Real one looks like 5e3d7b61a90d0c31f82a0636
+                            blobs_uri.append(
+                                "/static/core_visualization_insitu_app/user/img/no_data_layer.jpg")  # No data image
 
             if tab == 1:
                 for blob_name in blobs_name:
