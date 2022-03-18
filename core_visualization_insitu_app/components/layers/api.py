@@ -10,7 +10,7 @@ from core_visualization_insitu_app.components.layers.models import InSituLayer
 
 
 def get_all_layers_names():
-    """ Return the list of all the layers names
+    """Return the list of all the layers names
 
     Returns:
 
@@ -19,7 +19,7 @@ def get_all_layers_names():
 
 
 def toggle_layer_selection(layer_name):
-    """ Toggle the boolean that indicates if a layer is selected or not.
+    """Toggle the boolean that indicates if a layer is selected or not.
     Return the layer with the given layer name
 
     Args:
@@ -32,7 +32,7 @@ def toggle_layer_selection(layer_name):
 
 
 def set_layers(template_id):
-    """ Return layer tuples, a list of tuples. Each tuple is a layer.
+    """Return layer tuples, a list of tuples. Each tuple is a layer.
 
     Returns:
 
@@ -43,7 +43,9 @@ def set_layers(template_id):
     # Query the database
     build_filter = {"dict_content.amBuildDB.amBuild.generalInfo.buildID": build}
     projection = {"dict_content.amMonitoringDataSetDB.inSItuMonitoringItem.id": 1}
-    layers = query_database_api.execute_query(template_id, [json.dumps(build_filter)], json.dumps(projection))
+    layers = query_database_api.execute_query(
+        template_id, [json.dumps(build_filter)], json.dumps(projection)
+    )
 
     # set layers objects
     for layer_result in layers:
@@ -55,7 +57,7 @@ def set_layers(template_id):
 
 
 def get_layer_by_name(layer_name):
-    """ Return the layer object with the given argument
+    """Return the layer object with the given argument
 
     Args:
         layer_name:
@@ -67,7 +69,7 @@ def get_layer_by_name(layer_name):
 
 
 def get_selected_layer_name():
-    """ Return the only one selected layer object name
+    """Return the only one selected layer object name
 
     Returns:
 
@@ -76,7 +78,7 @@ def get_selected_layer_name():
 
 
 def delete_all_layers():
-    """ Delete all the InSituLayer objects
+    """Delete all the InSituLayer objects
 
     Returns:
 

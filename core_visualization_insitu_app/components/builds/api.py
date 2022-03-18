@@ -7,11 +7,13 @@ import json
 import core_explore_tree_app.components.data.query as query_database_api
 import core_visualization_insitu_app.components.projects.api as projects_api
 from core_visualization_insitu_app.components.builds.models import InSituBuild
-from core_visualization_insitu_app.utils.dict import get_dict_path_value as utils_get_value
+from core_visualization_insitu_app.utils.dict import (
+    get_dict_path_value as utils_get_value,
+)
 
 
 def get_all_builds_names_list():
-    """ Return the list of all the builds names in a list
+    """Return the list of all the builds names in a list
 
     Returns:
 
@@ -22,7 +24,7 @@ def get_all_builds_names_list():
 
 
 def get_all_builds_names():
-    """ Return the list of all the builds names in a list of tuples
+    """Return the list of all the builds names in a list of tuples
 
     Returns:
 
@@ -36,7 +38,7 @@ def get_all_builds_names():
 
 
 def toggle_build_selection(build_name):
-    """ Toggle the boolean that indicates if a build is selected or not.
+    """Toggle the boolean that indicates if a build is selected or not.
     Return the build with the given build name
 
     Args:
@@ -49,7 +51,7 @@ def toggle_build_selection(build_name):
 
 
 def set_builds(template_id):
-    """ Return build tuples, a list of tuples. Each tuple is a build.
+    """Return build tuples, a list of tuples. Each tuple is a build.
 
     Returns:
 
@@ -61,7 +63,9 @@ def set_builds(template_id):
     build_path = "dict_content.amBuildDB.amBuild.generalInfo.buildID"
     project_filter = {"dict_content.amBuildDB.amBuild.projectID": project}
     projection = {build_path: 1}
-    builds = query_database_api.execute_query(template_id, [json.dumps(project_filter)], json.dumps(projection))
+    builds = query_database_api.execute_query(
+        template_id, [json.dumps(project_filter)], json.dumps(projection)
+    )
 
     # set builds objects
     for build_result in builds:
@@ -77,7 +81,7 @@ def set_builds(template_id):
 
 
 def get_build_by_name(build_name):
-    """ Return the build object with the given argument
+    """Return the build object with the given argument
 
     Args:
         build_name:
@@ -89,7 +93,7 @@ def get_build_by_name(build_name):
 
 
 def get_selected_build_name():
-    """ Return the only one selected build object name
+    """Return the only one selected build object name
 
     Returns:
 
@@ -102,7 +106,7 @@ def get_selected_build_name():
 
 
 def delete_all_builds():
-    """ Delete all the InSituBuild objects
+    """Delete all the InSituBuild objects
 
     Returns:
 

@@ -4,7 +4,7 @@ import json
 
 
 def get_dict_value(dict_content, key):
-    """  Recursive method to get the value deep inside json tree
+    """Recursive method to get the value deep inside json tree
 
     Args:
         dict_content:  json tree
@@ -23,7 +23,7 @@ def get_dict_value(dict_content, key):
 
 
 def get_dict_path_value_data(dict_content, path):
-    """ Recursive method to get the value inside json tree from a full path
+    """Recursive method to get the value inside json tree from a full path
 
     Args:
         dict_content:
@@ -33,24 +33,26 @@ def get_dict_path_value_data(dict_content, path):
 
     """
 
-    path_list = path.split('.')
+    path_list = path.split(".")
 
     if dict_content:
-        if path_list[0] == 'dict_content':
-            path = path[len('dict_content.'):]
+        if path_list[0] == "dict_content":
+            path = path[len("dict_content.") :]
             path_list.pop(0)
 
         if len(path_list) == 1:
             return dict_content[path]
         else:
             substr_length = len(path_list[0]) + 1  # +1 to substring the point
-            return get_dict_path_value_data(dict_content[path_list[0]], path[substr_length:])
+            return get_dict_path_value_data(
+                dict_content[path_list[0]], path[substr_length:]
+            )
 
-    return 'Unknown'
+    return "Unknown"
 
 
 def get_dict_path_value(dict_content, path):
-    """ Recursive method to get the value inside json tree from a full path
+    """Recursive method to get the value inside json tree from a full path
 
     Args:
         dict_content:
@@ -59,11 +61,11 @@ def get_dict_path_value(dict_content, path):
     Returns:
 
     """
-    path_list = path.split('.')
+    path_list = path.split(".")
 
     if dict_content:
-        if path_list[0] == 'dict_content':
-            return get_dict_path_value(dict_content, path[(len(path_list[0]) + 1):])
+        if path_list[0] == "dict_content":
+            return get_dict_path_value(dict_content, path[(len(path_list[0]) + 1) :])
 
         if len(path_list) == 1:
             return dict_content[path]
@@ -71,11 +73,11 @@ def get_dict_path_value(dict_content, path):
             substr_length = len(path_list[0]) + 1  # +1 to substring the point
             return get_dict_path_value(dict_content[path_list[0]], path[substr_length:])
 
-    return ''
+    return ""
 
 
 def get_list_inside_dict(dict_path, dict_content):
-    """ return a list of a single dict.
+    """return a list of a single dict.
     This method goes throughout the dict 'dict_content' given in argument according to the path 'dict_path'
 
     Args:
@@ -86,9 +88,9 @@ def get_list_inside_dict(dict_path, dict_content):
 
     """
     if not isinstance(dict_path, list):
-        dict_path = dict_path.split('.')
+        dict_path = dict_path.split(".")
 
-    if dict_path[0] == 'dict_content':
+    if dict_path[0] == "dict_content":
         dict_path.pop(0)
 
     if isinstance(dict_content, dict):
@@ -116,7 +118,9 @@ def get_dicts_inside_list_of_dict(list_path, list_of_dict):
     """
     while len(list_path) > 1:
         for dict_to_parse in list_of_dict:
-            list_of_dict[list_of_dict.index(dict_to_parse)] = dict_to_parse[list_path[0]]
+            list_of_dict[list_of_dict.index(dict_to_parse)] = dict_to_parse[
+                list_path[0]
+            ]
         list_path = list_path[1:]
 
     if len(list_path) == 1:

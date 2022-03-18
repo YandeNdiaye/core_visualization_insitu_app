@@ -6,8 +6,8 @@ from django_mongoengine import fields, Document
 
 
 class InSituData(Document):
-    """Data Structure to handle the insitu_data related to the selection
-    """
+    """Data Structure to handle the insitu_data related to the selection"""
+
     project = fields.StringField(blank=False)
     build = fields.StringField(blank=False)
     part = fields.StringField(blank=False)
@@ -20,7 +20,7 @@ class InSituData(Document):
 
     @staticmethod
     def get_all_data():
-        """ Return the list of all the insitu_data
+        """Return the list of all the insitu_data
 
         Returns:
 
@@ -29,7 +29,7 @@ class InSituData(Document):
 
     @staticmethod
     def reset_default_data(project, build, part):
-        """ Return the insitu_data objects with the according arguments
+        """Return the insitu_data objects with the according arguments
 
         Args:
             project:
@@ -40,7 +40,9 @@ class InSituData(Document):
 
         """
 
-        insitu_objects = InSituData.objects.filter(project=project, build=build, part=part)
+        insitu_objects = InSituData.objects.filter(
+            project=project, build=build, part=part
+        )
         for insitu_object in insitu_objects:
             if insitu_object.layer_number != 0:
                 insitu_object.layer_number = insitu_object.layer_numbers[0]
@@ -51,15 +53,15 @@ class InSituData(Document):
 
     @staticmethod
     def get_data(project, build, part):
-        """ Get all insitu_data objects having the same project, build and part.
-       Should be 7 of them (3 tabs for data_name builds command and 2 tabs for data_name melt pool and layer wise)
+        """Get all insitu_data objects having the same project, build and part.
+        Should be 7 of them (3 tabs for data_name builds command and 2 tabs for data_name melt pool and layer wise)
 
-        Args:
-            project:
-            build:
-            part:
+         Args:
+             project:
+             build:
+             part:
 
-        Returns:
+         Returns:
 
         """
 
@@ -67,7 +69,7 @@ class InSituData(Document):
 
     @staticmethod
     def get_data_by_tab_name(project, build, part, data_name, tab):
-        """ Return a single insitu_data object
+        """Return a single insitu_data object
 
         Args:
             project:
@@ -79,11 +81,13 @@ class InSituData(Document):
         Returns:
 
         """
-        return InSituData.objects.get(project=project, build=build, part=part, data_name=data_name, tab=tab)
+        return InSituData.objects.get(
+            project=project, build=build, part=part, data_name=data_name, tab=tab
+        )
 
     @staticmethod
     def change_active_image(project, build, part, data_name, tab, active_image):
-        """ Change the active image from a single insitu_data object and return this image
+        """Change the active image from a single insitu_data object and return this image
 
         Args:
             project:
@@ -96,14 +100,18 @@ class InSituData(Document):
         Returns:
 
         """
-        InSituData.objects.filter(project=project, build=build, part=part, data_name=data_name, tab=tab).update(
-            active_image=active_image)
-        return InSituData.objects.get(project=project, build=build, part=part, data_name=data_name,
-                                      tab=tab).active_image
+        InSituData.objects.filter(
+            project=project, build=build, part=part, data_name=data_name, tab=tab
+        ).update(active_image=active_image)
+        return InSituData.objects.get(
+            project=project, build=build, part=part, data_name=data_name, tab=tab
+        ).active_image
 
     @staticmethod
-    def create_data(project, build, part, data_name, tab, images=None, layer_numbers=None):
-        """ Create an insitu data object
+    def create_data(
+        project, build, part, data_name, tab, images=None, layer_numbers=None
+    ):
+        """Create an insitu data object
 
         Args:
             project:
@@ -119,18 +127,33 @@ class InSituData(Document):
         """
         if (images is not None) and (layer_numbers is not None):
             if len(images) > 0 and len(layer_numbers) > 0:
-                return InSituData.objects.create(project=project, build=build, part=part, data_name=data_name, tab=tab,
-                                                 images=images, layer_number=layer_numbers[0],
-                                                 layer_numbers=layer_numbers, active_image=images[0])
+                return InSituData.objects.create(
+                    project=project,
+                    build=build,
+                    part=part,
+                    data_name=data_name,
+                    tab=tab,
+                    images=images,
+                    layer_number=layer_numbers[0],
+                    layer_numbers=layer_numbers,
+                    active_image=images[0],
+                )
 
-        return InSituData.objects.create(project=project, build=build, part=part, data_name=data_name, tab=tab,
-                                         images=images, layer_number=0,
-                                         layer_numbers=[0],
-                                         active_image="/static/core_visualization_insitu_app/user/img/no_data_layer.jpg")
+        return InSituData.objects.create(
+            project=project,
+            build=build,
+            part=part,
+            data_name=data_name,
+            tab=tab,
+            images=images,
+            layer_number=0,
+            layer_numbers=[0],
+            active_image="/static/core_visualization_insitu_app/user/img/no_data_layer.jpg",
+        )
 
     @staticmethod
     def delete_all_data():
-        """ Delete all insitu_data objects
+        """Delete all insitu_data objects
 
         Returns:
 
@@ -139,7 +162,7 @@ class InSituData(Document):
 
     @staticmethod
     def update_data(project, build, part, data_name, tab, layer_number, active_image):
-        """ Update the layer number and active image of insitu data object
+        """Update the layer number and active image of insitu data object
 
         Args:
             project:
@@ -153,13 +176,16 @@ class InSituData(Document):
         Returns:
 
         """
-        InSituData.objects.filter(project=project, build=build, part=part, data_name=data_name, tab=tab).update(
-            layer_number=layer_number, active_image=active_image)
-        return InSituData.objects.get(project=project, build=build, part=part, data_name=data_name, tab=tab)
+        InSituData.objects.filter(
+            project=project, build=build, part=part, data_name=data_name, tab=tab
+        ).update(layer_number=layer_number, active_image=active_image)
+        return InSituData.objects.get(
+            project=project, build=build, part=part, data_name=data_name, tab=tab
+        )
 
     @staticmethod
     def get_data_by_name_all_tabs(project, build, part, data_name):
-        """ Return all tabs from a single data name (ie build command, melt pool or layer wise)
+        """Return all tabs from a single data name (ie build command, melt pool or layer wise)
 
         Args:
             project:
@@ -170,4 +196,6 @@ class InSituData(Document):
         Returns:
 
         """
-        return InSituData.objects.filter(project=project, build=build, part=part, data_name=data_name)
+        return InSituData.objects.filter(
+            project=project, build=build, part=part, data_name=data_name
+        )

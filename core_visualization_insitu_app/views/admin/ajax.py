@@ -9,22 +9,25 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 
 import core_explore_tree_app.components.query_ontology.api as query_ontology_api
-from core_explore_tree_app.components.navigation.api import create_navigation_tree_from_owl_file
+from core_explore_tree_app.components.navigation.api import (
+    create_navigation_tree_from_owl_file,
+)
 from core_main_app.commons import exceptions
 from core_visualization_insitu_app.components.builds import api as builds_api
 from core_visualization_insitu_app.components.insitu_data import api as insitu_data_api
-from core_visualization_insitu_app.components.insitu_data import operations as insitu_data_operations
+from core_visualization_insitu_app.components.insitu_data import (
+    operations as insitu_data_operations,
+)
 from core_visualization_insitu_app.components.parts import api as parts_api
 from core_visualization_insitu_app.components.projects import api as projects_api
 from core_visualization_insitu_app.utils import parser as utils_parser
 
 logger = logging.getLogger(__name__)
-navigation_cache = caches['navigation']
+navigation_cache = caches["navigation"]
 
 
 def build_visualization_data(request):
-    """ Build data table object
-    """
+    """Build data table object"""
     error = None
     active_ontology = None
 
@@ -35,7 +38,9 @@ def build_visualization_data(request):
         # get the active ontology
         active_ontology = query_ontology_api.get_active()
     except exceptions.DoesNotExist:
-        error = {"error": "An Ontology should be active to explore. Please contact an admin."}
+        error = {
+            "error": "An Ontology should be active to explore. Please contact an admin."
+        }
 
     if error is None:
         try:
@@ -48,8 +53,12 @@ def build_visualization_data(request):
                 navigation = navigation_cache.get(str(nav_key))
             else:
                 # create the navigation
-                navigation = create_navigation_tree_from_owl_file(active_ontology.content)
-                navigation_cache.set(nav_key, navigation)  # navigation_cache.set(template_id, navigation)
+                navigation = create_navigation_tree_from_owl_file(
+                    active_ontology.content
+                )
+                navigation_cache.set(
+                    nav_key, navigation
+                )  # navigation_cache.set(template_id, navigation)
 
             # Clean previous instance objects
             projects_api.delete_all_projects()
@@ -76,32 +85,43 @@ def build_visualization_data(request):
 
                     for part in parts:
                         insitu_data_operations.load_frames(project, build, part)
-                        insitu_data_objects = insitu_data_api.get_data(project, build, part)
+                        insitu_data_objects = insitu_data_api.get_data(
+                            project, build, part
+                        )
                         for insitu_data_object in insitu_data_objects:
                             total_layers = insitu_data_object.layer_numbers[-1]
                             if total_layers > 0:
                                 data_name = insitu_data_object.data_name
                                 tab_number = insitu_data_object.tab
-                                insitu_data_line = [project, build, part, data_name, tab_number, total_layers]
+                                insitu_data_line = [
+                                    project,
+                                    build,
+                                    part,
+                                    data_name,
+                                    tab_number,
+                                    total_layers,
+                                ]
                                 data_table_list.append(insitu_data_line)
 
             data_table_csv = utils_parser.get_data_table_csv(data_table_list)
             data_lines = str(int((len(data_table_list) - 1) / 7))
 
-            data = {'data_table_csv': data_table_csv, 'data_lines': data_lines}
+            data = {"data_table_csv": data_table_csv, "data_lines": data_lines}
 
             logger.info("FINISH load visualization data")
 
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data), content_type="application/json")
 
         except exceptions.DoesNotExist as e_does_not_exist:
-            return HttpResponseBadRequest(str(e_does_not_exist), content_type='application/javascript')
+            return HttpResponseBadRequest(
+                str(e_does_not_exist), content_type="application/javascript"
+            )
         except Exception as e:
-            return HttpResponseBadRequest(str(e), content_type='application/javascript')
+            return HttpResponseBadRequest(str(e), content_type="application/javascript")
 
 
 def get_visualization_data(request):
-    """ Get the CSV table of all insitu data and calculate the number of parts that have images
+    """Get the CSV table of all insitu data and calculate the number of parts that have images
 
     Args:
         request:
@@ -118,6 +138,6 @@ def get_visualization_data(request):
     # If a part has images, it has images for all tabs
     data_lines = str(int((len(data_table) - 1) / 7))
 
-    data = {'data_table_csv': data_table_csv, 'data_lines': data_lines}
+    data = {"data_table_csv": data_table_csv, "data_lines": data_lines}
 
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps(data), content_type="application/json")

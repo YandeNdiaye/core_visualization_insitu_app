@@ -9,14 +9,14 @@ CQL_NAMESPACE = "http://siam.nist.gov/Database-Navigation-Ontology#"
 
 
 class InSituProject(Document):
-    """ Data Structure to handle the selected projects
-    """
+    """Data Structure to handle the selected projects"""
+
     name = fields.StringField(blank=True)
     is_selected = fields.BooleanField(default=False)
 
     @staticmethod
     def create_project(project):
-        """ Create project with the given argument as project name and return the project
+        """Create project with the given argument as project name and return the project
 
         Args:
             project:
@@ -27,7 +27,7 @@ class InSituProject(Document):
 
     @staticmethod
     def get_project_by_name(project_name):
-        """ Return the project with the given name
+        """Return the project with the given name
 
         Args:
             project_name:
@@ -39,7 +39,7 @@ class InSituProject(Document):
 
     @staticmethod
     def toggle_project_selection(project_name):
-        """ Toggle the boolean that indicates if a project is selected or not.
+        """Toggle the boolean that indicates if a project is selected or not.
         Return the project with the given project name
 
         Args:
@@ -51,13 +51,15 @@ class InSituProject(Document):
             if project.name == project_name:
                 InSituProject.objects.filter(name=project.name).update(is_selected=True)
             else:
-                InSituProject.objects.filter(name=project.name).update(is_selected=False)
+                InSituProject.objects.filter(name=project.name).update(
+                    is_selected=False
+                )
 
         return InSituProject.objects.get(name=project_name)
 
     @staticmethod
     def get_selected_project_name():
-        """ Return the list of all the projects names whose 'is_selected' is True
+        """Return the list of all the projects names whose 'is_selected' is True
 
         Returns:
 
@@ -69,7 +71,7 @@ class InSituProject(Document):
 
     @staticmethod
     def delete_all_projects():
-        """ Delete all projects
+        """Delete all projects
 
         Returns:
 

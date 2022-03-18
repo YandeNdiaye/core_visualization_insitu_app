@@ -9,24 +9,23 @@ from core_main_app.commons import exceptions
 
 
 class InSituBuild(Document):
-    """ Data Structure to handle the selected InSituBuild
+    """Data Structure to handle the selected InSituBuild"""
 
-    """
     name = fields.StringField(blank=True)
     is_selected = fields.BooleanField(default=False)
 
     @staticmethod
     def get_all_builds_names():
-        """ Return the list of all the builds names
+        """Return the list of all the builds names
 
         Returns:
 
         """
-        return InSituBuild.objects.all().values_list('name')
+        return InSituBuild.objects.all().values_list("name")
 
     @staticmethod
     def create_build(build):
-        """ Create and return a build object
+        """Create and return a build object
 
         Args:
             build:
@@ -38,7 +37,7 @@ class InSituBuild(Document):
 
     @staticmethod
     def get_build_by_name(build_name):
-        """ Return the build object with the given argument
+        """Return the build object with the given argument
 
         Args:
             build_name:
@@ -50,7 +49,7 @@ class InSituBuild(Document):
 
     @staticmethod
     def get_selected_build_name():
-        """ Return the only one selected build object name
+        """Return the only one selected build object name
 
         Returns:
 
@@ -62,7 +61,7 @@ class InSituBuild(Document):
 
     @staticmethod
     def toggle_build_selection(build_name):
-        """ Toggle the boolean that indicates if a build is selected or not.
+        """Toggle the boolean that indicates if a build is selected or not.
         Return the build with the given build name
 
         Args:
@@ -81,7 +80,7 @@ class InSituBuild(Document):
 
     @staticmethod
     def delete_all_builds():
-        """ Delete all build objects
+        """Delete all build objects
 
         Returns:
 
@@ -90,7 +89,7 @@ class InSituBuild(Document):
 
     @staticmethod
     def get_selected_build():
-        """ Return the selected build
+        """Return the selected build
 
         Returns:
 

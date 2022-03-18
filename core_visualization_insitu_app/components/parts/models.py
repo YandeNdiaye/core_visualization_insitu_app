@@ -9,25 +9,24 @@ from core_main_app.commons import exceptions
 
 
 class InSituPart(Document):
-    """Data Structure to handle the selected InSituPart
+    """Data Structure to handle the selected InSituPart"""
 
-    """
     name = fields.StringField(blank=True)
     part_id = fields.StringField(blank=True)
     is_selected = fields.BooleanField(default=False)
 
     @staticmethod
     def get_all_parts_names():
-        """ Return the list of all the parts names
+        """Return the list of all the parts names
 
         Returns:
 
         """
-        return InSituPart.objects.all().values_list('name')
+        return InSituPart.objects.all().values_list("name")
 
     @staticmethod
     def create_part(part_name, part_id):
-        """ Create and return a part object
+        """Create and return a part object
 
         Args:
             part_name:
@@ -40,7 +39,7 @@ class InSituPart(Document):
 
     @staticmethod
     def get_part_by_name(part_name):
-        """ Return the part object with the given argument
+        """Return the part object with the given argument
 
         Args:
             part_name:
@@ -52,7 +51,7 @@ class InSituPart(Document):
 
     @staticmethod
     def get_selected_part_name():
-        """ Return the only one selected part object name
+        """Return the only one selected part object name
 
         Returns:
 
@@ -64,7 +63,7 @@ class InSituPart(Document):
 
     @staticmethod
     def get_selected_part_id():
-        """ Return the only one selected part object id
+        """Return the only one selected part object id
 
         Returns:
 
@@ -76,7 +75,7 @@ class InSituPart(Document):
 
     @staticmethod
     def toggle_part_selection(part_name):
-        """ Toggle the boolean that indicates if a part is selected or not.
+        """Toggle the boolean that indicates if a part is selected or not.
         Return the part with the given part name
 
         Args:
@@ -95,7 +94,7 @@ class InSituPart(Document):
 
     @staticmethod
     def delete_all_parts():
-        """ Delete all part objects
+        """Delete all part objects
 
         Returns:
 
@@ -104,7 +103,7 @@ class InSituPart(Document):
 
     @staticmethod
     def get_selected_part():
-        """ Return the selected part
+        """Return the selected part
 
         Returns:
 

@@ -5,28 +5,28 @@ from celery import shared_task
 from django.core.cache import caches
 
 from core_main_app.commons import exceptions
-from core_explore_tree_app.components.navigation.api import create_navigation_tree_from_owl_file
+from core_explore_tree_app.components.navigation.api import (
+    create_navigation_tree_from_owl_file,
+)
 from core_visualization_insitu_app.components.projects import api as projects_api
 from core_visualization_insitu_app.components.builds import api as builds_api
 from core_visualization_insitu_app.components.parts import api as parts_api
 from core_visualization_insitu_app.components.insitu_data import api as insitu_data_api
-from core_visualization_insitu_app.components.insitu_data import operations as insitu_data_operations
-import core_explore_tree_app.components.query_ontology.api as query_ontology_api
-
+from core_visualization_insitu_app.components.insitu_data import (
+    operations as insitu_data_operations,
+)
 from core_visualization_insitu_app.utils import parser as utils_parser
 
-from celery.schedules import crontab
-from celery.task import periodic_task
+import core_explore_tree_app.components.query_ontology.api as query_ontology_api
+
 
 logger = logging.getLogger(__name__)
-navigation_cache = caches['navigation']
+navigation_cache = caches["navigation"]
 
 
-# Execute daily at midnight
-@periodic_task(run_every=crontab(minute=0, hour=0))
+@shared_task
 def build_visualization_data(request):
-    """ Build data table object
-    """
+    """Build data table object"""
     error = None
     active_ontology = None
 
@@ -37,7 +37,9 @@ def build_visualization_data(request):
         # get the active ontology
         active_ontology = query_ontology_api.get_active()
     except exceptions.DoesNotExist:
-        error = {"error": "An Ontology should be active to explore. Please contact an admin."}
+        error = {
+            "error": "An Ontology should be active to explore. Please contact an admin."
+        }
 
     if error is None:
         try:
@@ -50,8 +52,12 @@ def build_visualization_data(request):
                 navigation = navigation_cache.get(nav_key)
             else:
                 # create the navigation
-                navigation = create_navigation_tree_from_owl_file(active_ontology.content)
-                navigation_cache.set(nav_key, navigation)  # navigation_cache.set(template_id, navigation)
+                navigation = create_navigation_tree_from_owl_file(
+                    active_ontology.content
+                )
+                navigation_cache.set(
+                    nav_key, navigation
+                )  # navigation_cache.set(template_id, navigation)
 
             # Clean previous instance objects
             projects_api.delete_all_projects()
@@ -101,6 +107,6 @@ def build_display_data(request):
     data_table_csv = utils_parser.get_data_table_csv(data_table)
 
     data_lines = str(int((len(data_table) - 1) / 7))
-    data = {'data_table_csv': data_table_csv, 'data_lines': data_lines}
+    data = {"data_table_csv": data_table_csv, "data_lines": data_lines}
 
     return data

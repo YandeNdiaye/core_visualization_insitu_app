@@ -9,24 +9,23 @@ from core_main_app.commons import exceptions
 
 
 class InSituLayer(Document):
-    """Data Structure to handle the selected InSituLayer
+    """Data Structure to handle the selected InSituLayer"""
 
-    """
     name = fields.StringField(blank=True)
     is_selected = fields.BooleanField(default=False)
 
     @staticmethod
     def get_all_layers_names():
-        """ Return the list of all the layers names
+        """Return the list of all the layers names
 
         Returns:
 
         """
-        return InSituLayer.objects.all().values_list('name')
+        return InSituLayer.objects.all().values_list("name")
 
     @staticmethod
     def create_layer(layer):
-        """ Create and return a layer object
+        """Create and return a layer object
 
         Args:
             layer:
@@ -38,7 +37,7 @@ class InSituLayer(Document):
 
     @staticmethod
     def get_layer_by_name(layer_name):
-        """ Return the layer object with the given argument
+        """Return the layer object with the given argument
 
         Args:
             layer_name:
@@ -50,7 +49,7 @@ class InSituLayer(Document):
 
     @staticmethod
     def get_selected_layer_name():
-        """ Return the only one selected layer object name
+        """Return the only one selected layer object name
 
         Returns:
 
@@ -60,7 +59,7 @@ class InSituLayer(Document):
 
     @staticmethod
     def toggle_layer_selection(layer_name):
-        """ Toggle the boolean that indicates if a layer is selected or not.
+        """Toggle the boolean that indicates if a layer is selected or not.
         Return the layer with the given layer name
 
         Args:
@@ -79,7 +78,7 @@ class InSituLayer(Document):
 
     @staticmethod
     def delete_all_layers():
-        """ Delete all layer objects
+        """Delete all layer objects
 
         Returns:
 
@@ -88,7 +87,7 @@ class InSituLayer(Document):
 
     @staticmethod
     def get_selected_layer():
-        """ Return the selected layer
+        """Return the selected layer
 
         Returns:
 
