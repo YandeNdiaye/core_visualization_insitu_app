@@ -267,15 +267,18 @@ def previous_layer(request):
     data_name = info_data[:-5]
     tab = int(info_data[-1])
 
+    # Layerwise, Meltpool, Build command and XCT windows have at least 1 tab. XCT has only one tab
     data_object_tab1 = insitu_data_api.get_data_by_tab_name(data_name, 1)
-    data_object_tab2 = insitu_data_api.get_data_by_tab_name(data_name, 2)
+    data_objects = [data_object_tab1]
 
-    data_objects = [data_object_tab1, data_object_tab2]
-
-    # Build command is the only frame with 3 tabs
-    if data_name == "build-command":
-        data_object_tab3 = insitu_data_api.get_data_by_tab_name(data_name, 3)
-        data_objects.append(data_object_tab3)
+    # Layerwise, Meltpool, and Build command have at least 2 tabs, XCT have only one tab
+    if data_name != "xray-computed-tomography":
+        data_object_tab2 = insitu_data_api.get_data_by_tab_name(data_name, 2)
+        data_objects.append(data_object_tab2)
+        # Build command is the only frame with 3 tabs
+        if data_name == "build-command":
+            data_object_tab3 = insitu_data_api.get_data_by_tab_name(data_name, 3)
+            data_objects.append(data_object_tab3)
 
     # Get the active tab
     data_object = insitu_data_api.get_data_by_tab_name(data_name, tab)
@@ -356,15 +359,18 @@ def next_layer(request):
     data_name = info_data[:-5]
     tab = int(info_data[-1])
 
+    # Layerwise, Meltpool, Build command and XCT windows have at least 1 tab. XCT has only one tab
     data_object_tab1 = insitu_data_api.get_data_by_tab_name(data_name, 1)
-    data_object_tab2 = insitu_data_api.get_data_by_tab_name(data_name, 2)
+    data_objects = [data_object_tab1]
 
-    data_objects = [data_object_tab1, data_object_tab2]
-
-    # Build command is the only frame with 3 tabs
-    if data_name == "build-command":
-        data_object_tab3 = insitu_data_api.get_data_by_tab_name(data_name, 3)
-        data_objects.append(data_object_tab3)
+    # Layerwise, Meltpool, and Build command have at least 2 tabs, XCT have only one tab
+    if data_name != "xray-computed-tomography":
+        data_object_tab2 = insitu_data_api.get_data_by_tab_name(data_name, 2)
+        data_objects.append(data_object_tab2)
+        # Build command is the only frame with 3 tabs
+        if data_name == "build-command":
+            data_object_tab3 = insitu_data_api.get_data_by_tab_name(data_name, 3)
+            data_objects.append(data_object_tab3)
 
     # Get the active tab
     data_object = insitu_data_api.get_data_by_tab_name(data_name, tab)
@@ -417,10 +423,17 @@ def get_frames(request):
 
     for insitu_object in insitu_objects:
         data_id = insitu_object.data_name.replace("-", "_")
-
-        layer_information[
-            data_id + "_title_tab" + str(insitu_object.tab)
-        ] = insitu_data_api.get_title(insitu_object.images, insitu_object.layer_numbers)
+        window_title = insitu_data_api.get_title(
+            insitu_object.images, insitu_object.layer_numbers
+        )
+        if "xray_computed_tomography" in data_id:
+            layer_information[
+                data_id + "_title_tab" + str(insitu_object.tab)
+            ] = window_title.replace("layer", "slice")
+        else:
+            layer_information[
+                data_id + "_title_tab" + str(insitu_object.tab)
+            ] = window_title
         layer_information[
             data_id + "_image_tab" + str(insitu_object.tab)
         ] = insitu_object.active_image

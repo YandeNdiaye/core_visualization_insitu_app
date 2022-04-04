@@ -23,7 +23,7 @@ class TestGetDictPathValue(TestCase):
     def test_get_dict_path_value_valid(self):
         # Arrange
         dict_content = {
-            u"amTestDB": {u"amTest": {u"partTest": {u"projectID": u"NIST-RPS-14"}}}
+            "amTestDB": {"amTest": {"partTest": {"projectID": "NIST-RPS-14"}}}
         }
         path = "amTestDB.amTest.partTest.projectID"
         # Act
@@ -38,27 +38,27 @@ class TestGetListInsideDict(TestCase):
         # Arrange
         dict_path = "dict_content.amTestDB.amTest.partTest.testResults.chemistry.constituent.element"
         dict_content = {
-            u"amTestDB": {
-                u"amTest": {
-                    u"partTest": {
-                        u"testResults": {
-                            u"chemistry": {
-                                u"constituent": [
-                                    {u"element": u"Oxygen"},
-                                    {u"element": u"Carbon"},
-                                    {u"element": u"Nitrogen"},
-                                    {u"element": u"Sulfur"},
-                                    {u"element": u"Manganese"},
-                                    {u"element": u"Silicon"},
-                                    {u"element": u"Phosphorus"},
-                                    {u"element": u"Chromium"},
-                                    {u"element": u"Molybdenum"},
-                                    {u"element": u"Niobium"},
-                                    {u"element": u"Tantalum"},
-                                    {u"element": u"Cobalt"},
-                                    {u"element": u"Titanium"},
-                                    {u"element": u"Aluminum"},
-                                    {u"element": u"Iron"},
+            "amTestDB": {
+                "amTest": {
+                    "partTest": {
+                        "testResults": {
+                            "chemistry": {
+                                "constituent": [
+                                    {"element": "Oxygen"},
+                                    {"element": "Carbon"},
+                                    {"element": "Nitrogen"},
+                                    {"element": "Sulfur"},
+                                    {"element": "Manganese"},
+                                    {"element": "Silicon"},
+                                    {"element": "Phosphorus"},
+                                    {"element": "Chromium"},
+                                    {"element": "Molybdenum"},
+                                    {"element": "Niobium"},
+                                    {"element": "Tantalum"},
+                                    {"element": "Cobalt"},
+                                    {"element": "Titanium"},
+                                    {"element": "Aluminum"},
+                                    {"element": "Iron"},
                                 ]
                             }
                         }
@@ -69,21 +69,21 @@ class TestGetListInsideDict(TestCase):
         # Act
         list_inside_dict = dict.get_list_inside_dict(dict_path, dict_content)
         result = [
-            {u"element": u"Oxygen"},
-            {u"element": u"Carbon"},
-            {u"element": u"Nitrogen"},
-            {u"element": u"Sulfur"},
-            {u"element": u"Manganese"},
-            {u"element": u"Silicon"},
-            {u"element": u"Phosphorus"},
-            {u"element": u"Chromium"},
-            {u"element": u"Molybdenum"},
-            {u"element": u"Niobium"},
-            {u"element": u"Tantalum"},
-            {u"element": u"Cobalt"},
-            {u"element": u"Titanium"},
-            {u"element": u"Aluminum"},
-            {u"element": u"Iron"},
+            {"element": "Oxygen"},
+            {"element": "Carbon"},
+            {"element": "Nitrogen"},
+            {"element": "Sulfur"},
+            {"element": "Manganese"},
+            {"element": "Silicon"},
+            {"element": "Phosphorus"},
+            {"element": "Chromium"},
+            {"element": "Molybdenum"},
+            {"element": "Niobium"},
+            {"element": "Tantalum"},
+            {"element": "Cobalt"},
+            {"element": "Titanium"},
+            {"element": "Aluminum"},
+            {"element": "Iron"},
         ]
         # Assert
         self.assertTrue(list_inside_dict == result)
@@ -92,11 +92,11 @@ class TestGetListInsideDict(TestCase):
         # Arrange
         dict_path = "dict_content.amTestDB.amTest.partTest.testResults.chemistry.constituent.element"
         dict_content = {
-            u"amTestDB": {
-                u"amTest": {
-                    u"partTest": {
-                        u"testResults": {
-                            u"chemistry": {u"constituent": [{u"element": u"Iron"}]}
+            "amTestDB": {
+                "amTest": {
+                    "partTest": {
+                        "testResults": {
+                            "chemistry": {"constituent": [{"element": "Iron"}]}
                         }
                     }
                 }
@@ -104,14 +104,14 @@ class TestGetListInsideDict(TestCase):
         }
         # Act
         list_inside_dict = dict.get_list_inside_dict(dict_path, dict_content)
-        result = [{u"element": u"Iron"}]
+        result = [{"element": "Iron"}]
         # Assert
         self.assertTrue(list_inside_dict == result)
 
     def test_get_list_inside_dict_none(self):
         # Arrange
         dict_path = "dict_content.amTestDB.amTest.partTest.testResults.chemistry.constituent.element"
-        dict_content = {u"amTestDB": {u"amTest": {u"partTest": {u"testResults": {}}}}}
+        dict_content = {"amTestDB": {"amTest": {"partTest": {"testResults": {}}}}}
         # Act
         list_inside_dict = dict.get_list_inside_dict(dict_path, dict_content)
         # Assert

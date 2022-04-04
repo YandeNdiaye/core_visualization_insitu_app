@@ -47,11 +47,27 @@ function openMeltPoolTab(evt, tabNumber) {
   document.getElementById(tabNumber).className += " tabContentActive";
 }
 
+function openXrayComputedTomographyTab(evt, tabNumber) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("xrayComputedTomographytabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+    tabcontent[i].className = tabcontent[i].className.replace(" tabContentActive", "");
+  }
+  tablinks = document.getElementsByClassName("xrayComputedTomographytablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabNumber).style.display = "block";
+  evt.currentTarget.className += " active";
+  document.getElementById(tabNumber).className += " tabContentActive";
+
+}
 
 // .ready() called.
 $(function() {
     document.getElementById("buildCommandDefaultOpen").click();
     document.getElementById("layerWiseDefaultOpen").click();
     document.getElementById("meltPoolDefaultOpen").click();
-
+    document.getElementById("xrayComputedTomographyDefaultOpen").click();
 });

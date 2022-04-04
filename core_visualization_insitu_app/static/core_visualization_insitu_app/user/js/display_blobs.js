@@ -1,3 +1,15 @@
+var showVisuLoadingSpinner = function() {
+    document.getElementById("loading_background").style.visibility = "visible";
+    $('#visualization-panel-transparent-bgd').show();
+    $('#visualization-panel-loading').show();
+}
+
+var hideVisuLoadingSpinner = function() {
+    document.getElementById("loading_background").style.visibility = "hidden";
+    $('#visualization-panel-transparent-bgd').hide();
+    $('#visualization-panel-loading').hide();
+}
+
 var display_3d_visualization = function(){
     $.ajax({
         url: update_3d,
@@ -111,7 +123,7 @@ var load_stl_document = function(stl_document){
     camera2.up = camera.up; // important!
 
     // axes
-    axes = new THREE.AxisHelper( 150 );
+    axes = new THREE.AxesHelper( 150 );
     var position = axes.geometry.attributes.position;
 
     // Add labels

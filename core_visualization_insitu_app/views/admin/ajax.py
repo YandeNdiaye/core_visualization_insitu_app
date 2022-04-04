@@ -32,7 +32,6 @@ def build_visualization_data(request):
     active_ontology = None
 
     logger.info("START load visualization data")
-
     try:
         # Set up the needed explore tree related objects to get the queries
         # get the active ontology
@@ -41,7 +40,6 @@ def build_visualization_data(request):
         error = {
             "error": "An Ontology should be active to explore. Please contact an admin."
         }
-
     if error is None:
         try:
             # Get the active ontology's ID
@@ -133,10 +131,26 @@ def get_visualization_data(request):
 
     data_table_csv = utils_parser.get_data_table_csv(data_table)
 
-    # There are 7 tabs for one part
+    # Calculate the number of parts that have images
     # data_lines are the number of parts that have images
     # If a part has images, it has images for all tabs
-    data_lines = str(int((len(data_table) - 1) / 7))
+    part_list = {}
+    for data_l in data_table[1:]:
+        build_name = data_l[1]
+        if build_name not in part_list.keys():
+            part_list[build_name] = [data_l[2]]
+        else:
+            v = part_list[build_name]
+            if data_l[2] not in v:
+                v.append(data_l[2])
+                part_list[build_name] = v
+    data_lines = 0
+    for key, values in part_list.items():
+        parts = []
+        for v in values:
+            if v not in parts:
+                parts.append(v)
+                data_lines = data_lines + 1
 
     data = {"data_table_csv": data_table_csv, "data_lines": data_lines}
 

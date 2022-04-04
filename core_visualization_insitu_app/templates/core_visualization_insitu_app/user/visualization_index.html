@@ -9,6 +9,12 @@
 <link href="{% static 'core_visualization_insitu_app/user/css/main.css' %}" rel="stylesheet">
 <link href="{% static 'core_visualization_insitu_app/user/css/frame.css' %}" rel="stylesheet">
 
+<div id="visualization-view-error" style="margin-top: 50px; display: none;">
+    <p class="alert alert-danger">
+        <i class="fa fa-exclamation-triangle"></i> An error occurred. If you keep
+        seeing this message, please <a href="{% url 'core_website_app_contact' %}"> contact an administrator</a>.
+    </p>
+</div>
 <div id='insitu' class="visualization-selection">
 
     <h3>Visualization Selection</h3>
@@ -46,8 +52,15 @@
         <h3>Layer Wise</h3>
         {% include 'core_visualization_insitu_app/user/layer_wise_wrapper.html' %}
     </div>
+    <div id="xray-computed-tomography" class="insitu-frame">
+        <h3>X-ray Computed Tomography</h3>
+        {% include 'core_visualization_insitu_app/user/xray_computed_tomography_wrapper.html' %}
+    </div>
 </div>
 
-{% include 'core_visualization_insitu_app/common/loading_background.html' %}
+<div id="loading_background" style="visibility: hidden;">
+    {% include 'core_visualization_insitu_app/common/loading_background.html' %}
+</div>
+
 
 {% endif %}

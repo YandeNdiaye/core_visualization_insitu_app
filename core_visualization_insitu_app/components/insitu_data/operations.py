@@ -302,6 +302,11 @@ def query_images(data_name, tab, template_id, project, build, part):
         zip_name = "imageSetInZip"
         tabs_code = ["LPV", "LEV"]
 
+    elif data_name == "xray-computed-tomography":
+        query_name = "XCTStackImage"
+        zip_name = "imageSetInZip"
+        tabs_code = ["XCTC"]
+
     # Query the images
     query_name_path = (
         "dict_content.amMonitoringDataSetDB.inSItuMonitoringItem.dataSet."
@@ -325,11 +330,15 @@ def query_images(data_name, tab, template_id, project, build, part):
     }
     name_projection = {query_name_path: 1}
     uri_projection = {query_uri_path: 1}
-    blobs_name_results = query_database_api.execute_query(
-        template_id,
-        [json.dumps(build_query_filter), json.dumps(part_query_filter)],
-        json.dumps(name_projection),
-    )
+
+    try:
+        blobs_name_results = query_database_api.execute_query(
+            template_id,
+            [json.dumps(build_query_filter), json.dumps(part_query_filter)],
+            json.dumps(name_projection),
+        )
+    except:
+        blobs_name_results = None
 
     if len(blobs_name_results) > 0:
 
@@ -389,7 +398,7 @@ def query_images(data_name, tab, template_id, project, build, part):
 
             if tab == 1:
                 for blob_name in blobs_name:
-                    if blob_name.startswith(tabs_code[0]):
+                    if tabs_code[0] + "_" in blob_name:
                         layers_number.append(
                             int(blob_name.split("_")[-1][5:])
                         )  # Parse PAT_PartXXXX_LayerXXXX to XXXX the layer number
@@ -398,14 +407,14 @@ def query_images(data_name, tab, template_id, project, build, part):
 
             if tab == 2:
                 for blob_name in blobs_name:
-                    if blob_name.startswith(tabs_code[1]):
+                    if tabs_code[1] + "_" in blob_name:
                         layers_number.append(int(blob_name.split("_")[-1][5:]))
                         layers_uri.append(blobs_uri[index])
                     index += 1
 
             if tab == 3:
                 for blob_name in blobs_name:
-                    if blob_name.startswith(tabs_code[2]):
+                    if tabs_code[2] + "_" in blob_name:
                         layers_number.append(int(blob_name.split("_")[-1][5:]))
                         layers_uri.append(blobs_uri[index])
                     index += 1
@@ -473,7 +482,12 @@ def load_frames(project, build, part):
     template_id = active_ontology.template.id
 
     # Create insitu_data objects
-    data = {"build-command": [1, 2, 3], "melt-pool": [1, 2], "layer-wise": [1, 2]}
+    data = {
+        "build-command": [1, 2, 3],
+        "melt-pool": [1, 2],
+        "layer-wise": [1, 2],
+        "xray-computed-tomography": [1],
+    }
 
     for data_name in data.keys():
         for tab in data[data_name]:

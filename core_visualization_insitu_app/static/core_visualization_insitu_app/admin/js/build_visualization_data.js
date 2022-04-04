@@ -4,10 +4,12 @@ load and create data lines visualization objects
 */
 
 var loadVisualizationData = function(event){
+   $("#visualization-view-error").hide();
    showVisuLoadingSpinner();
    $.ajax({
     url: build_visualization_data,
     success: function(data) {
+        $("#visualization-view-error").hide();
         var dataT = data.data_table_csv;
         var table = loadTable(dataT);
         $('#data_table').html(table);
@@ -15,7 +17,7 @@ var loadVisualizationData = function(event){
         hideVisuLoadingSpinner();
     },
     error: function(data){
-        console.log("Error");
+        showErrorPanel();
         }
   });
  }
@@ -45,24 +47,28 @@ var getTable = function(event){
     $.ajax({
     url: get_visualization_data,
     success: function(data) {
+        $("#visualization-view-error").hide();
+        hideVisuLoadingSpinner();
         var dataT = data.data_table_csv;
         var table = loadTable(dataT);
         $('#data_table').html(table);
         document.getElementById('data-lines').innerHTML = "Number of parts with images: "+data.data_lines;
-        hideVisuLoadingSpinner();
+
     },
     error: function(data){
-        console.log("Error");
+        showErrorPanel();
         }
   });
  }
 
 var showVisuLoadingSpinner = function() {
+    document.getElementById("loading_background").style.visibility = "visible";
     $('#visualization-panel-transparent-bgd').show();
     $('#visualization-panel-loading').show();
 }
 
 var hideVisuLoadingSpinner = function() {
+    document.getElementById("loading_background").style.visibility = "hidden";
     $('#visualization-panel-transparent-bgd').hide()
     $('#visualization-panel-loading').hide()
 }
@@ -74,3 +80,7 @@ $(function() {
     $('#build-visualization-data').on("click", loadVisualizationData);
 });
 
+var showErrorPanel = function() {
+    hideVisuLoadingSpinner();
+    $("#visualization-view-error").show();
+}
