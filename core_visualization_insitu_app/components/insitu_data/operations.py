@@ -100,8 +100,10 @@ def query_data_information(template_id):
                 start_height_path, final_height_path, query_filter, template_id
             )
 
-        if (start_height_parsed_result != "Unknown") and (
-            final_height_parsed_result != "Unknown"
+        if (
+            (start_height_parsed_result != "Unknown")
+            and (final_height_parsed_result != "Unknown")
+            and (float(layer_thickness) != 0)
         ):
             total_layers = int(
                 (float(final_height_parsed_result) - float(start_height_parsed_result))

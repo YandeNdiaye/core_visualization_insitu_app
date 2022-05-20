@@ -58,7 +58,6 @@ def set_parts(template_id):
     """
     # Get selected build
     build = builds_api.get_selected_build_name()
-
     # Query the database
     part_path = "dict_content.amBuildDB.amBuild.parts.part"
     part_name_path = "dict_content.amBuildDB.amBuild.parts.part.partName"
@@ -68,7 +67,6 @@ def set_parts(template_id):
     parts = query_database_api.execute_query(
         template_id, [json.dumps(build_filter)], json.dumps(projection)
     )
-
     # set parts objects
     for part_result in parts:
         part_dict = part_result.dict_content
@@ -85,7 +83,6 @@ def set_parts(template_id):
                 if get_selected_part_name() is None:
                     new_part.is_selected = True
                 new_part.save()
-
     return InSituPart.objects.all()
 
 

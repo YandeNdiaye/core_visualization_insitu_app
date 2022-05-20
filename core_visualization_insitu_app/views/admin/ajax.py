@@ -45,7 +45,6 @@ def build_visualization_data(request):
             # Get the active ontology's ID
             template_id = active_ontology.template.id
             nav_key = active_ontology.id
-
             # get the navigation from the cache
             if nav_key in navigation_cache:
                 navigation = navigation_cache.get(str(nav_key))
@@ -66,7 +65,6 @@ def build_visualization_data(request):
             projects = projects_api.get_all_projects_list(navigation, template_id)
 
             data_table_list = []
-
             for project in projects:
                 # Set builds depending on default active project
                 projects_api.toggle_project_selection(project)
@@ -107,7 +105,6 @@ def build_visualization_data(request):
             data = {"data_table_csv": data_table_csv, "data_lines": data_lines}
 
             logger.info("FINISH load visualization data")
-
             return HttpResponse(json.dumps(data), content_type="application/json")
 
         except exceptions.DoesNotExist as e_does_not_exist:
