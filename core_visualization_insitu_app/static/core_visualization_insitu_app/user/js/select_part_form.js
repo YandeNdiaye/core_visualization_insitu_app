@@ -4,12 +4,17 @@
  * Update selected part
  */
 var onPartChange = function(event){
+
     showVisuLoadingSpinner();
+    project = $("#select-project-dropdown-form :selected").attr("value");
+    build = $("#select-build-dropdown-form :selected").attr("value");
     part = $("#select-part-dropdown-form :selected").attr("value");
     $.ajax({
         url : select_part_form,
         type : "GET",
         data : {
+            project,
+            build,
             part,
         },
         dataType: "json",

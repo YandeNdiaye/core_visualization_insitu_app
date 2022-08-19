@@ -14,8 +14,6 @@ class InSituData(Document):
     data_name = fields.StringField(blank=False)
     tab = fields.IntField(blank=False)
     images = fields.ListField(blank=True)
-    active_image = fields.StringField(blank=True)
-    layer_number = fields.IntField(blank=True)
     layer_numbers = fields.ListField(blank=True)
 
     @staticmethod
@@ -81,6 +79,7 @@ class InSituData(Document):
         Returns:
 
         """
+
         return InSituData.objects.get(
             project=project, build=build, part=part, data_name=data_name, tab=tab
         )
@@ -125,6 +124,7 @@ class InSituData(Document):
         Returns:
 
         """
+
         if (images is not None) and (layer_numbers is not None):
             if len(images) > 0 and len(layer_numbers) > 0:
                 return InSituData.objects.create(
@@ -134,9 +134,7 @@ class InSituData(Document):
                     data_name=data_name,
                     tab=tab,
                     images=images,
-                    layer_number=layer_numbers[0],
                     layer_numbers=layer_numbers,
-                    active_image=images[0],
                 )
 
         return InSituData.objects.create(
@@ -145,10 +143,8 @@ class InSituData(Document):
             part=part,
             data_name=data_name,
             tab=tab,
-            images=images,
-            layer_number=0,
+            images=["/static/core_visualization_insitu_app/user/img/no_data_layer.jpg"],
             layer_numbers=[0],
-            active_image="/static/core_visualization_insitu_app/user/img/no_data_layer.jpg",
         )
 
     @staticmethod

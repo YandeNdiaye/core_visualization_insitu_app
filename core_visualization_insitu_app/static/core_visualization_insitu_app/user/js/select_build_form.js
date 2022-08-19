@@ -5,11 +5,13 @@
  */
 var onBuildChange = function(event){
     showVisuLoadingSpinner();
+    project = $("#select-project-dropdown-form :selected").attr("value");
     build = $("#select-build-dropdown-form :selected").attr("value");
     $.ajax({
         url : select_build_form,
         type : "GET",
         data : {
+            project,
             build,
         },
         dataType: "json",

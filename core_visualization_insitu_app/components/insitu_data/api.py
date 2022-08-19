@@ -2,10 +2,7 @@
 InsSituData api
 """
 
-from core_visualization_insitu_app.components.builds import api as builds_api
 from core_visualization_insitu_app.components.insitu_data.models import InSituData
-from core_visualization_insitu_app.components.parts import api as parts_api
-from core_visualization_insitu_app.components.projects import api as projects_api
 
 
 def get_all_data():
@@ -32,39 +29,22 @@ def get_data(project, build, part):
     return InSituData.get_data(project, build, part)
 
 
-def get_data_by_tab_name(data_name, tab):
+def get_data_by_tab_name(data, data_name, tab):
     """Return a single insitu_data object
 
     Args:
-        data_name:
-        tab:
+        data: dict of selected project, build and part
+        data_name: Window name
+        tab: tab position
 
     Returns:
 
     """
-    project = projects_api.get_selected_project_name()
-    build = builds_api.get_selected_build_name()
-    part = parts_api.get_selected_part_name()
+
+    project = data["project"]
+    build = data["build"]
+    part = data["part"]
     return InSituData.get_data_by_tab_name(project, build, part, data_name, tab)
-
-
-def change_active_image(data_name, tab, active_image):
-    """Change the active image from a single insitu_data object and return this image
-
-    Args:
-        data_name:
-        tab:
-        active_image:
-
-    Returns:
-
-    """
-    project = projects_api.get_selected_project_name()
-    build = builds_api.get_selected_build_name()
-    part = parts_api.get_selected_part_name()
-    return InSituData.change_active_image(
-        project, build, part, data_name, tab, active_image
-    )
 
 
 def get_all_table():
@@ -111,18 +91,19 @@ def create_data(project, build, part, data_name, tab, images=None, layers=None):
     return InSituData.create_data(project, build, part, data_name, tab, images, layers)
 
 
-def get_data_by_name_all_tabs(data_name):
+def get_data_by_name_all_tabs(data, data_name):
     """Return 2 or 3 insitu objects (same project, build, part, data_name) and different tab
 
     Args:
+        data:
         data_name:
 
     Returns:
 
     """
-    project = projects_api.get_selected_project_name()
-    build = builds_api.get_selected_build_name()
-    part = parts_api.get_selected_part_name()
+    project = data["project"]
+    build = data["build"]
+    part = data["part"]
     return InSituData.get_data_by_name_all_tabs(project, build, part, data_name)
 
 
@@ -135,30 +116,11 @@ def delete_all_data():
     InSituData.delete_all_data()
 
 
-def update_data(data_name, tab, layer_number, active_image):
-    """Update the the layer_number and active_image of an insitu data object
-
-    Args:
-        data_name:
-        tab:
-        layer_number:
-        active_image:
-
-    Returns:
-
-    """
-    project = projects_api.get_selected_project_name()
-    build = builds_api.get_selected_build_name()
-    part = parts_api.get_selected_part_name()
-    return InSituData.update_data(
-        project, build, part, data_name, tab, layer_number, active_image
-    )
-
-
-def get_title(images, layers, layer_number=None):
+def get_title(data, images, layers, layer_number=None):
     """Get the title of an image displayed. The title format is "Project, Build, Part, Layer number"
 
     Args:
+        data: dict w/ selected project, build and part
         images:
         layers:
         layer_number:
@@ -171,16 +133,15 @@ def get_title(images, layers, layer_number=None):
             layer_number = layers[0]
 
         title = (
-            projects_api.get_selected_project_name()
+            data["project"]
             + ", "
-            + builds_api.get_selected_build_name()
+            + data["build"]
             + ", "
-            + parts_api.get_selected_part_name()
+            + data["part"]
             + ", "
             + " layer "
             + str(layer_number)
         )
-
     else:
         title = "No Data Available"
 

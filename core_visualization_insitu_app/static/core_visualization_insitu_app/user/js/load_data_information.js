@@ -11,6 +11,10 @@ var hideVisuLoadingSpinner = function() {
 }
 
  var onClickDL = function(event){
+    project = $("#select-project-dropdown-form :selected").attr("value");
+    build = $("#select-build-dropdown-form :selected").attr("value");
+    part = $("#select-part-dropdown-form :selected").attr("value");
+
     var siblings = $(this).parent().siblings().each(function(){
        var class_list = this.classList;
        if (class_list.length >= 2) {
@@ -25,6 +29,9 @@ var hideVisuLoadingSpinner = function() {
     type: "POST",
     data : {
             frame_id,
+            project,
+            build,
+            part,
         },
     dataType: "json",
     success: function(data) {
@@ -48,12 +55,20 @@ var hideVisuLoadingSpinner = function() {
  }
 
  var onClickPrev = function(event){
-   frame_id = $(this).parent().parent().attr("id")
+   frame_id = $(this).parent().parent().attr("id");
+
+   project = $("#select-project-dropdown-form :selected").attr("value");
+   build = $("#select-build-dropdown-form :selected").attr("value");
+   part = $("#select-part-dropdown-form :selected").attr("value");
+
    $.ajax({
     url: previous_layer,
     type: "POST",
     data : {
             frame_id,
+            project,
+            build,
+            part,
         },
     dataType: "json",
     success: function(data) {
@@ -75,11 +90,18 @@ var hideVisuLoadingSpinner = function() {
 
  var onClickNext = function(event){
    frame_id = $(this).parent().parent().attr("id");
+   project = $("#select-project-dropdown-form :selected").attr("value");
+   build = $("#select-build-dropdown-form :selected").attr("value");
+   part = $("#select-part-dropdown-form :selected").attr("value");
+
    $.ajax({
     url: next_layer,
     type: "POST",
     data : {
             frame_id,
+            project,
+            build,
+            part,
         },
     dataType: "json",
     success: function(data) {
@@ -102,10 +124,18 @@ var hideVisuLoadingSpinner = function() {
 function loadFrames() {
 
     showVisuLoadingSpinner();
+    project = $("#select-project-dropdown-form :selected").attr("value");
+    build = $("#select-build-dropdown-form :selected").attr("value");
+    part = $("#select-part-dropdown-form :selected").attr("value");
 
     $.ajax({
     url: get_frames,
     type: "POST",
+    data : {
+            project,
+            build,
+            part,
+        },
     dataType: "json",
     success: function(data) {
         if(data != null) {
@@ -155,9 +185,17 @@ function loadFrames() {
 }
 
  var loadInfo = function(event){
+   project = $("#select-project-dropdown-form :selected").attr("value");
+   build = $("#select-build-dropdown-form :selected").attr("value");
+   part = $("#select-part-dropdown-form :selected").attr("value");
    $.ajax({
     url: update_insitu_data_info,
     type: "GET",
+    data: {
+        project,
+        build,
+        part,
+    },
     dataType: "json",
     success: function(data) {
        if(data !== null) {

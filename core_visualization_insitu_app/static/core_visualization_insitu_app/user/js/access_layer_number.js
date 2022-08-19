@@ -3,6 +3,10 @@ var onClickAccessLayer = function(event){
     var layer_max = $("#"+ frame_id ).text();
     var layer_number = $(this).closest('.input-box').text();
 
+    var project = $("#select-project-dropdown-form :selected").attr("value");
+    var build = $("#select-build-dropdown-form :selected").attr("value");
+    var part = $("#select-part-dropdown-form :selected").attr("value");
+
     var box_id = "access-layer-number-" + $(this).attr('id').substring(22);
     var box_content = $("#" + box_id);
     var layer_number = Number(box_content.val());
@@ -29,6 +33,9 @@ var onClickAccessLayer = function(event){
             data : {
                 frame_id,
                 layer_number,
+                project,
+                build,
+                part
             },
             dataType: "json",
             success: function(data) {

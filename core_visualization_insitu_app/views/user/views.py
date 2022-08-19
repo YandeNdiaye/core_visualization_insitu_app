@@ -11,12 +11,15 @@ from core_explore_tree_app.components.navigation.api import (
 )
 from core_main_app.commons import exceptions
 from core_main_app.utils.rendering import render
-from core_visualization_insitu_app.components.projects import api as projects_api
-from core_visualization_insitu_app.components.builds import api as builds_api
-from core_visualization_insitu_app.components.parts import api as parts_api
+from core_visualization_insitu_app.utils.operations import (
+    get_parts_from_buildname,
+    get_builds_from_projectname,
+    get_all_projects_list,
+)
 from core_visualization_insitu_app.components.insitu_data import (
     operations as data_operations,
 )
+
 
 from core_visualization_insitu_app.views.user.forms import (
     SelectProjectDropDown,
@@ -40,6 +43,7 @@ def index(request):
     """
     error = None
     active_ontology = None
+
     try:
         # Set up the needed explore tree related objects to get the queries
         # get the active ontology
@@ -69,30 +73,47 @@ def index(request):
                     nav_key, navigation
                 )  # navigation_cache.set(template_id, navigation)
 
-            # Clean previous instance objects
-            projects_api.delete_all_projects()
-            builds_api.delete_all_builds()
-            parts_api.delete_all_parts()
-
             # Get the existing projects from the navigation
-            projects_tuples = projects_api.get_projects(navigation, template_id)
+            projects = get_all_projects_list(navigation, template_id)
+            projects_tuples = []
+            for project in projects:
+                projects_tuples.append(tuple([project, project]))
+
             select_project = SelectProjectDropDown()
             select_project.fields["projects"].choices = projects_tuples
 
-            # Set builds depending on default active project
-            builds_api.set_builds(template_id)
-            builds_tuples = builds_api.get_all_builds_names()
+            # We take the first project as a default for the projects form
+            default_project = projects_tuples[0][0]
+
+            # Get builds depending on default active project
+            builds = get_builds_from_projectname(template_id, default_project)
+
             select_build = SelectBuildDropDown()
+            builds_tuples = []
+            for build in builds:
+                builds_tuples.append(tuple([build, build]))
             select_build.fields["builds"].choices = builds_tuples
 
-            # Set parts depending on default active project
-            parts_api.set_parts(template_id)
-            parts_tuples = parts_api.get_all_parts_names()
-            select_part = SelectPartDropDown()
-            select_part.fields["parts"].choices = parts_tuples
+            # We take the first build as a default for the builds form
+            default_build = builds_tuples[0][0]
 
+            # Get parts depending on default active project
+            parts = get_parts_from_buildname(template_id, default_build)
+
+            select_part = SelectPartDropDown()
+
+            parts_tuples = []
+            for part in parts:
+                parts_tuples.append(tuple([part, part]))
+
+            select_part.fields["parts"].choices = parts_tuples
             # Data information
-            data_information = data_operations.query_data_information(template_id)
+
+            # We take the first part as a default for the parts form
+            default_part = parts_tuples[0][0]
+            data_information = data_operations.query_data_information(
+                template_id, default_build, default_part
+            )
         except exceptions.DoesNotExist as e_does_not_exist:
             error = {"error": str(e_does_not_exist)}
         except Exception as e:
@@ -100,6 +121,18 @@ def index(request):
     if error:
         context = error
     else:
+
+        selected_layers = {
+            "build-command": int(1),
+            "melt-pool": int(1),
+            "layer-wise": int(1),
+            "xray-computed-tomography": int(1),
+        }
+
+        current_session = request.session.session_key
+        # Set the current layers tab numbers for the active session
+        request.session["selected_layers"] = selected_layers
+
         context = {
             "projects": select_project,
             "builds": select_build,

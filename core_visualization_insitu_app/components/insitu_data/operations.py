@@ -5,14 +5,11 @@ import json
 
 import core_explore_tree_app.components.data.query as query_database_api
 import core_explore_tree_app.components.query_ontology.api as query_ontology_api
-from core_visualization_insitu_app.components.builds import api as builds_api
 from core_visualization_insitu_app.components.insitu_data import api as insitu_data_api
-from core_visualization_insitu_app.components.parts import api as parts_api
-from core_visualization_insitu_app.components.projects import api as projects_api
 from core_visualization_insitu_app.utils import dict as utils
 
 
-def query_data_information(template_id):
+def query_data_information(template_id, build_name, part_name):
     """Query part size from the current selection and return the value
 
     Args:
@@ -21,14 +18,12 @@ def query_data_information(template_id):
     Returns:
 
     """
-    # Get selected build and part for filters
-    build = builds_api.get_selected_build_name()
-    part_name = parts_api.get_selected_part_name()
-    part_id = parts_api.get_selected_part_id()
 
     # Instantiate storage dict
     data_information = {}
 
+    # Todo: Change later if we need the IDs instead of the part name
+    part_id = part_name
     # Build location
     build_location_path = "dict_content.amBuildDB.amBuild.parts.part.buildLocation"
     query_filter = {"dict_content.amBuildDB.amBuild.parts.part.partName": part_name}
@@ -50,7 +45,7 @@ def query_data_information(template_id):
         "dict_content.amBuildDB.amBuild.amProcesses.inProcess.amProcessPlans.amProcessPlan."
         "AMMTProcessPlan.buildSetting.layerThickness"
     )
-    query_filter = {"dict_content.amBuildDB.amBuild.generalInfo.buildID": build}
+    query_filter = {"dict_content.amBuildDB.amBuild.generalInfo.buildID": build_name}
     query_result = query_data(layer_thickness_path, query_filter, template_id)
     if query_result:
         list_result = utils.get_list_inside_dict(layer_thickness_path, query_result)
@@ -66,7 +61,9 @@ def query_data_information(template_id):
     if parsed_result == "Unknown":
         # Different path for same infos (thanks schema...)
         layer_thickness_path = "dict_content.amBuildDB.amBuild.amProcesses.inProcess.amProcessPlans.amProcessPlan.DeltaProcessPlan.buildSetting.layerThickness"
-        query_filter = {"dict_content.amBuildDB.amBuild.generalInfo.buildID": build}
+        query_filter = {
+            "dict_content.amBuildDB.amBuild.generalInfo.buildID": build_name
+        }
         query_result = query_data(layer_thickness_path, query_filter, template_id)
         if query_result:
             list_result = utils.get_list_inside_dict(layer_thickness_path, query_result)
@@ -85,7 +82,9 @@ def query_data_information(template_id):
     if layer_thickness != "Unknown":
         start_height_path = "dict_content.amBuildDB.amBuild.amProcesses.inProcess.amProcessPlans.amProcessPlan.DeltaProcessPlan.buildSetting.startHeight"
         final_height_path = "dict_content.amBuildDB.amBuild.amProcesses.inProcess.amProcessPlans.amProcessPlan.DeltaProcessPlan.buildSetting.finalHeight"
-        query_filter = {"dict_content.amBuildDB.amBuild.generalInfo.buildID": build}
+        query_filter = {
+            "dict_content.amBuildDB.amBuild.generalInfo.buildID": build_name
+        }
         start_height_parsed_result, final_height_parsed_result = calculate_height(
             start_height_path, final_height_path, query_filter, template_id
         )
@@ -115,7 +114,6 @@ def query_data_information(template_id):
         total_layers = "Unknown"
 
     data_information["total_layers"] = total_layers
-
     return data_information
 
 
@@ -213,10 +211,11 @@ def parse_dict_result(list_result, dict_key, part_id="part 1"):
     return data_info
 
 
-def update_layer(data_objects, new_layer_number):
+def update_layer(data, data_objects, new_layer_number):
     """
 
     Args:
+        data: dict of selected project, build and part
         data_objects: List of insitu data objects
         new_layer_number: int
 
@@ -235,6 +234,7 @@ def update_layer(data_objects, new_layer_number):
         if new_layer_number in data_object.layer_numbers:
             title.append(
                 insitu_data_api.get_title(
+                    data,
                     data_object.images,
                     data_object.layer_numbers,
                     layer_number=new_layer_number,
@@ -249,9 +249,6 @@ def update_layer(data_objects, new_layer_number):
             active_images.append(no_data)
 
         tab.append(data_object.tab)
-        insitu_data_api.update_data(
-            data_object.data_name, tab[-1], new_layer_number, active_images[-1]
-        )
 
     # Same total layers for every tab of the same data_name
     # last layer_numbers element is the last layer
@@ -429,7 +426,7 @@ def query_images(data_name, tab, template_id, project, build, part):
     return images_data
 
 
-def query_stl_document(template_id):
+def query_stl_document(project, template_id):
     """Query the DB to get the STL document (under a URI) related to the selected project in order to display it in 3D
 
     Args:
@@ -438,7 +435,6 @@ def query_stl_document(template_id):
     Returns: Dict with the URI and Filename if there is an existing STL for the project, an empty dict otherwise
 
     """
-    project = projects_api.get_selected_project_name()
     file_location_path = "dict_content.amDesignDB.amDesign.part.digitalModel.tesselation.tesselatedModel.fileLocation"
     file_name_path = "dict_content.amDesignDB.amDesign.part.digitalModel.tesselation.tesselatedModel.fileName"
 
@@ -498,6 +494,7 @@ def load_frames(project, build, part):
             )
             images = images_data["images"]
             layers = images_data["layers"]
+
             data_object = insitu_data_api.create_data(
                 project, build, part, data_name, tab, images, layers
             )

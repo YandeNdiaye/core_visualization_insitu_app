@@ -9,18 +9,22 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 
 import core_explore_tree_app.components.query_ontology.api as query_ontology_api
+
 from core_explore_tree_app.components.navigation.api import (
     create_navigation_tree_from_owl_file,
 )
 from core_main_app.commons import exceptions
-from core_visualization_insitu_app.components.builds import api as builds_api
 from core_visualization_insitu_app.components.insitu_data import api as insitu_data_api
 from core_visualization_insitu_app.components.insitu_data import (
     operations as insitu_data_operations,
 )
-from core_visualization_insitu_app.components.parts import api as parts_api
-from core_visualization_insitu_app.components.projects import api as projects_api
+
 from core_visualization_insitu_app.utils import parser as utils_parser
+from core_visualization_insitu_app.utils.operations import (
+    get_builds_from_projectname,
+    get_parts_from_buildname,
+    get_all_projects_list,
+)
 
 logger = logging.getLogger(__name__)
 navigation_cache = caches["navigation"]
@@ -31,7 +35,6 @@ def build_visualization_data(request):
     error = None
     active_ontology = None
 
-    logger.info("START load visualization data")
     try:
         # Set up the needed explore tree related objects to get the queries
         # get the active ontology
@@ -58,26 +61,20 @@ def build_visualization_data(request):
                 )  # navigation_cache.set(template_id, navigation)
 
             # Clean previous instance objects
-            projects_api.delete_all_projects()
             insitu_data_api.delete_all_data()
 
             # Get the existing projects from the navigation
-            projects = projects_api.get_all_projects_list(navigation, template_id)
+            projects = get_all_projects_list(navigation, template_id)
 
             data_table_list = []
             for project in projects:
-                # Set builds depending on default active project
-                projects_api.toggle_project_selection(project)
-                builds_api.delete_all_builds()
-                builds_api.set_builds(template_id)
-                builds = builds_api.get_all_builds_names_list()
 
-                for build in builds:
-                    # Set parts depending on default active build
-                    builds_api.toggle_build_selection(build)
-                    parts_api.delete_all_parts()
-                    parts_api.set_parts(template_id)
-                    parts = parts_api.get_all_parts_names_list()
+                # Get builds depending on default active project
+                builds_name = get_builds_from_projectname(template_id, project)
+
+                for build in builds_name:
+                    # Get parts depending on default active build
+                    parts = get_parts_from_buildname(template_id, build)
 
                     for part in parts:
                         insitu_data_operations.load_frames(project, build, part)

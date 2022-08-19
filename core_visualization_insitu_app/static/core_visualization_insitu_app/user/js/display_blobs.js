@@ -11,9 +11,13 @@ var hideVisuLoadingSpinner = function() {
 }
 
 var display_3d_visualization = function(){
+    project = $("#select-project-dropdown-form :selected").attr("value");
     $.ajax({
         url: update_3d,
         type: "POST",
+        data : {
+            project,
+        },
         dataType: 'json',
         success: function(data){
             if ( Object.keys(data).length !== 0) {load_stl_document(data.file_location_uri.toString()); }
